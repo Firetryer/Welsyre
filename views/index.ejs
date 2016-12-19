@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<% include partials/head %>
+	</head>
+	<body>
+		<div>
+			<% include partials/common%>
+			<% if(user){%>
+				<h2>Welcome<%=username%>!</h2>
+			<%}%>
+		</div> <!-- /container -->
+	</body>
+</html>

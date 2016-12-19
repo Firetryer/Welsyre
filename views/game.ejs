@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Space Shooting Game!</title>
+		<link rel="stylesheet" href="/css/gameStyle.css"/>
+		<link rel="stylesheet" href="/css/bootstrap.css">
+		<link rel="stylesheet" href="/css/jquery-ui.css">
+	</head>
+	<body style = "margin: 0px">
+
+		<div id = "main_menu">
+			<% include partials_game/main_menu%>
+		</div>
+		<div id = "game_div">
+			
+			<canvas id = "gameCanvas"></canvas>
+		</div>
+
+		<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+		<script src="/js/jquery-3.1.1.js"></script>
+		<script src="/js/vue.js"></script>
+		<script src="/js/jquery-ui.js"></script>
+		<script src="/js/PasMadeEngine.js"></script>
+	</body>
+</html>
