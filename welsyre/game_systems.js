@@ -25,7 +25,7 @@ exports.COMPONENT_INITIALIZER = function(col_masks){
 		movement   : new Array(ENTITY_COUNT),
 		image      : new Array(ENTITY_COUNT),
 		modules    : new Array(ENTITY_COUNT),
-		projectiles: new Array(ENTITY_COUNT),
+		projectile : new Array(ENTITY_COUNT),
 		container  : new Array(ENTITY_COUNT),
 		weapon     : new Array(ENTITY_COUNT),
 		range      : new Array(ENTITY_COUNT),
@@ -38,7 +38,7 @@ exports.COMPONENT_INITIALIZER = function(col_masks){
 		WORLD.movement[g]    = comp.movement();
 		WORLD.image[g]       = comp.image();
 		WORLD.modules[g]     = comp.ship_modules();
-		WORLD.projectiles[g] = comp.projectile();
+		WORLD.projectile[g] = comp.projectile();
 		WORLD.container[g]   = comp.container();
 		WORLD.weapon[g]      = comp.weapon();
 		WORLD.range[g]       = comp.range();
@@ -104,12 +104,15 @@ var create_ranged_weapon = function(WORLD, parent_id){
 var create_projectile = function(WORLD, parent_id){
 	entity = CreateEntity(WORLD);
 	WORLD.mask[entity]    = COMPONENTS.POSITION | COMPONENTS.VELOCITY | COMPONENTS.IMAGE | COMPONENTS.PROJECTILE | COMPONENTS.COLLISION;
+	
+	WORLD.collision[entity].collision_target  = null;
 	WORLD.position[entity].x        		  = WORLD.position[parent_id].x;
 	WORLD.position[entity].y        		  = WORLD.position[parent_id].y;
 	WORLD.position[entity].rotation 		  = WORLD.position[parent_id].rotation;
 	WORLD.velocity[entity].velocity      	  = 620;
 	WORLD.velocity[entity].velocity_max 	  = 620;
-	WORLD.projectiles[entity]                 = comp.projectile();
+	WORLD.projectile[entity]                  = comp.projectile();
+	WORLD.projectile[entity].parent_id        = parent_id;
 	WORLD.image[entity].image                 = "laser";
 	return entity;
 }
@@ -233,7 +236,7 @@ exports.projectiles_life_system = function(WORLD){
 	projectile_mask = (COMPONENTS.PROJECTILE);
 	for(var entities = 0; entities < ENTITY_COUNT; entities ++){
 		if((WORLD.mask[entities] & projectile_mask) == projectile_mask){
-			pro = WORLD.projectiles[entities];
+			pro = WORLD.projectile[entities];
 
 			if(pro.spawn >= pro.life_span){
 				DestroyEntity(WORLD,entities);
@@ -256,9 +259,22 @@ exports.collision_detection_system = function(WORLD){
 					entity1_pos        = WORLD.position[ent1];
 					entity2_pos        = WORLD.position[ent2];
 					if(check_bounding_collision(entity1_pos, entity2_pos, entity1_dimensions, entity2_dimensions)){
-						
+						WORLD.collision[ent1].collision_target = ent2;
+						WORLD.collision[ent2].collision_target = ent1;
 					}
 				}
+			}
+		}
+	}
+}
+
+exports.bullet_hits_system = function(WORLD){
+	projectile_masks = (COMPONENTS.PROJECTILE);
+	for(var entity = 0; entity < ENTITY_COUNT; entity++){
+		if((WORLD.mask[entity] & projectile_masks) == projectile_masks){
+			if(WORLD.collision[entity].collision_target != WORLD.projectile[entity].parent_id){
+				console.log(WORLD.collision[entity].collision_target+ " ====" + WORLD.projectile[entity].parent_id);
+				DestroyEntity(WORLD, entity);
 			}
 		}
 	}

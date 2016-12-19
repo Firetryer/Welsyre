@@ -46,11 +46,14 @@ var GameSession = function(){
 
 	self.update = function(dt){
 		ren.collision_detection_system(self.WORLD);
+
 		ren.physics_system(self.WORLD, dt);
 		ren.movement_system(self.WORLD, dt);
-		ren.projectiles_movement_system(self.WORLD, dt);
 		ren.module_system(self.WORLD);
+		ren.projectiles_movement_system(self.WORLD, dt);
 		ren.projectiles_life_system(self.WORLD);
+		ren.bullet_hits_system(self.WORLD);
+
 		self.emitters();
 	}
 

@@ -55,7 +55,8 @@ exports.container = function(){
 
 
 exports.projectile = function(){  //Empty component, mainly used to identify if an entity a projectile
-	var self = {}
+	var self = {};
+	self.parent_id = null;
 	self.life_span = 400;
 	self.spawn     = 0;
 	return self;
@@ -75,5 +76,6 @@ exports.range = function(){
 
 exports.collision = function(){
 	self = {};
+	self.collision_target = null;
 	return self;
 }
