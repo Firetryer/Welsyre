@@ -1,0 +1,1 @@
+var laser_masks = [];

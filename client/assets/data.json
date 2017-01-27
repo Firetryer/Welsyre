@@ -1,1 +1,1 @@
-{"ship_tank": {"width": 72, "name": "ship_tank", "height": 72}, "laser": {"width": 13, "name": "laser", "height": 31}, "bullet": {"width": 32, "name": "bullet", "height": 32}, "ship_standard": {"width": 85, "name": "ship_standard", "height": 85}}
+{"ship_tank": {"width": 72, "name": "ship_tank", "height": 72}, "arena01": {"width": 1000, "name": "arena01", "height": 1000}, "laser": {"width": 13, "name": "laser", "height": 31}, "bullet": {"width": 32, "name": "bullet", "height": 32}, "ship_standard": {"width": 85, "name": "ship_standard", "height": 85}}

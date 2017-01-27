@@ -1,5 +1,6 @@
 var express = require('express');
 var User = require('../models/user')
+var Player = require('../models/player')
 var router = express.Router();
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -76,10 +77,13 @@ router.post('/register', function(req, res){
 				email: email,
 				password: password
 			});
+			var newPlayer = new Player({
+				username: username
+			});
 			User.createUser(newUser, function(err, user){
 				if(err) throw err;
 			});
-
+			Player.createUser(newPlayer);
 			req.flash("success_msg", "You are registered and can now log in!");
 
 			res.redirect('/');

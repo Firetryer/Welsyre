@@ -1,18 +1,26 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Space Shooting Game!</title>
+		<title>LOOS!</title>
 		<link rel="stylesheet" href="/css/gameStyle.css"/>
 		<link rel="stylesheet" href="/css/bootstrap.css">
 		<link rel="stylesheet" href="/css/jquery-ui.css">
 	</head>
-	<body style = "margin: 0px">
-
+	<body>
+		
+		<div class="loader" id = "loading"></div>
 		<div id = "main_menu">
 			<% include partials_game/main_menu%>
 		</div>
+		
 		<div id = "game_div">
-			
+			<div id = "top_left">
+				<% include partials_game/stats%>
+			</div>
+			<div id = "bottom_left">
+				<% include partials_game/chatbox%>
+			</div>
+
 			<canvas id = "gameCanvas"></canvas>
 		</div>
 

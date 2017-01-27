@@ -26,7 +26,7 @@ exports.velocity = function(){ //Physics related component
 	self.vel_acceleration   = 10;     //for velocity
 	self.rot_velocity = 0;
 	self.rot_max = 260;
-	self.rot_acceleration = 40;
+	self.rot_acceleration = 20;
 	return self;
 }
 exports.movement = function(){  //Flags for checking if keys for movement has been activated
@@ -64,7 +64,7 @@ exports.projectile = function(){
 	self.parent_id = null;
 	self.life_span = 400;
 	self.spawn     = 0;
-	self.damage    = 25;
+	self.damage    = 40;
 	return self;
 }
 exports.weapon = function(){
@@ -92,7 +92,7 @@ exports.health = function(){
 		max_health    : 50,
 		current_health: 50,
 	}
-	self.take_damage    = [];
+	self.take_damage  = [];
 	return self;
 }
 

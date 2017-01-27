@@ -127,7 +127,8 @@ setInterval(function(){
 	dt = now - lastUpdate;
 	lastUpdate = now;
 
-	network.Update(dt/ 1000.0);
+	network.MatchMaking();
+	network.Update_Game(dt / 1000.0)
 
 
 

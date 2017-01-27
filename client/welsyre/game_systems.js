@@ -1,7 +1,7 @@
 var exports = module.exports = {};
 var Game = require('../models/player');
 var comp = require("./entity_components.js");
-var ENTITY_COUNT = 60;
+var ENTITY_COUNT = 250;
 var HITBOX_OFFSET = 0.3;
 //HELPERS
 var COMPONENTS = {
@@ -38,23 +38,6 @@ exports.COMPONENT_INITIALIZER = function(col_masks){
 	}	
 	WORLD.image_properties = col_masks;
 	WORLD.damage_stack     = [];
-	WORLD.player_to_entity = {};
-
-	WORLD.CreateEntity = function(){//Refactor this to be part of WORLD. In the long run, have all the helper functions be part of WORLD
-		for(var entity = 0; entity < ENTITY_COUNT; ++entity){
-			if(WORLD.mask[entity] == COMPONENTS.NONE){
-				return entity;
-			}
-		}
-		console.log("NO MORE FREE ENTITY SLOTS")
-		return null;
-	}
-
-	WORLD.DestroyEntity = function(entity){//Refactor this to be part of WORLD
-		WORLD.mask[entity]    = COMPONENTS.NONE;
-	}
-
-	//CONSTRUCTOR AREA
 	for(var g = 0; g < ENTITY_COUNT; g++){
 		WORLD.mask[g]        = COMPONENTS.NONE;
 		WORLD.position[g]    = comp.position();
@@ -74,7 +57,7 @@ exports.COMPONENT_INITIALIZER = function(col_masks){
 	return WORLD
 }
 
-/*var CreateEntity = function(WORLD){//Refactor this to be part of WORLD. In the long run, have all the helper functions be part of WORLD
+var CreateEntity = function(WORLD){
 	for(var entity = 0; entity < ENTITY_COUNT; ++entity){
 		if(WORLD.mask[entity] == COMPONENTS.NONE){
 			return entity;
@@ -83,23 +66,10 @@ exports.COMPONENT_INITIALIZER = function(col_masks){
 	console.log("NO MORE FREE ENTITY SLOTS")
 	return null;
 }
-*/
-exports.System_Control = function(){
-	self = {
-		collision      : true,
-		physics        : true,
-		arena_bounds   : true,
-		movement       : true,
-		module         : true,
-		projectile_move: true,
-		projectile_life: true,
-		bullet_hit     : true,
-		damage         : true,
-		shield_damage  : true,
-		health_damage  : true,
-		shield_recharge: true,
-	}
-	return self;
+
+
+var DestroyEntity = function(WORLD, entity){
+	WORLD.mask[entity]    = COMPONENTS.NONE;
 }
 
 exports.GetAllEntities = function(){
@@ -113,37 +83,23 @@ exports.GetAllEntities = function(){
 	return entityList;
 }
 
-var spawn_player = exports.spawn_player = function(WORLDS, player){
-	facing = [0, 90, 180, 270, 359];
-	direction = facing[Math.floor(Math.random()*facing.length)];
-	angle = Math.random()*Math.PI*2;
-	x = Math.cos(angle)*200;
-	y = Math.sin(angle)*200;
-	console.log("Spawned new Player");
-	player.alive = true;
-	CreatePlayer(WORLDS, player, x, y, direction);
 
-}
-
-var CreatePlayer = function(WORLD, player, x, y, rot){
-	entity = WORLD.CreateEntity();
-	WORLD.mask[entity] = COMPONENTS.POSITION | COMPONENTS.VELOCITY | COMPONENTS.MOVEMENT | COMPONENTS.IMAGE | COMPONENTS.CONTAINER | COMPONENTS.MODULES | COMPONENTS.COLLISION | COMPONENTS.HEALTH;
+/*exports.CreatePlayer = function(WORLD, x, y, health){
+	entity = CreateEntity(WORLD);
+	WORLD.mask[entity]    = COMPONENTS.POSITION | COMPONENTS.VELOCITY | COMPONENTS.MOVEMENT | COMPONENTS.IMAGE | COMPONENTS.CONTAINER | COMPONENTS.MODULES | COMPONENTS.COLLISION;
 	WORLD.position[entity].x              = x;
 	WORLD.position[entity].y              = y;
-	WORLD.position[entity].rotation       = rot;
+	WORLD.position[entity].rotation       = 0;
 	WORLD.velocity[entity].velocity       = 0;
-	WORLD.health[entity].health           = 150;
+	WORLD.health[entity].health           = health;
 	WORLD.container[entity].module_slot01 = create_ranged_weapon(WORLD, entity);
 	create_image(WORLD, entity, "ship_standard");
-	for(i in player.loadout){
-		addModule(WORLD, entity, player.loadout[i]);
-	}
-	console.log("Created New Player");
-	WORLD.player_to_entity[player.player.username] = entity;
-}
+	
+	return entity;
+}*/
 
 
-/*exports.CreatePlayer = function(WORLD, username, x, y, rot, callback){
+exports.CreatePlayer = function(WORLD, username, x, y, rot, callback){
 	
 	Game.find("player_info",{username:username}, function(err, data){
 		if (err) console.log(err);
@@ -170,11 +126,11 @@ var CreatePlayer = function(WORLD, player, x, y, rot){
 			});
 		}
 	});
-}*/
+}
 
 var addModule = function(WORLD, entity_id, module){
 	if(module.type == "SHIELD"){
-		//console.log("added shield to "+ entity_id);
+		console.log("added shield to "+ entity_id);
 		WORLD.mask[entity_id] += COMPONENTS.SHIELD;
 		WORLD.shield[entity_id].name                        = module.name;
 		WORLD.shield[entity_id].stats                	    = module.stats;
@@ -192,14 +148,14 @@ var create_image = function(WORLD, entity, name){
 }
 
 var create_ranged_weapon = function(WORLD, parent_id){
-	id = WORLD.CreateEntity();
+	id = CreateEntity(WORLD);
 	WORLD.mask[id]    = COMPONENTS.WEAPON | COMPONENTS.RANGE;
 	WORLD.weapon[id].parent_id = parent_id;
 	return id;
 }
 
 var create_projectile = function(WORLD, parent_id){
-	entity = WORLD.CreateEntity();
+	entity = CreateEntity(WORLD);
 	WORLD.mask[entity]    = COMPONENTS.POSITION | COMPONENTS.VELOCITY | COMPONENTS.IMAGE | COMPONENTS.PROJECTILE | COMPONENTS.COLLISION;
 	
 	WORLD.collision[entity]                   = comp.collision();
@@ -224,7 +180,6 @@ exports.physics_system = function(WORLD, entities, dt){
 		pos = WORLD.position[entities];
 		vel = WORLD.velocity[entities];
 		mov = WORLD.movement[entities];
-
 		//Increases throttle
 		if(mov.accelerate_forward && !(vel.velocity >= vel.velocity_max)){
 			vel.velocity += vel.vel_acceleration;
@@ -275,6 +230,8 @@ exports.movement_system = function(WORLD, entities, dt){
 	movement_mask = (COMPONENTS.POSITION | COMPONENTS.VELOCITY);
 	if((WORLD.mask[entities] & movement_mask) == movement_mask){
 		pos = WORLD.position[entities];
+		pos.old_x = pos.x;
+		pos.old_y = pos.y;
 		vel = WORLD.velocity[entities];
 		img = WORLD.image[entities];
 
@@ -317,7 +274,7 @@ var within_arena = function(ent ,img){
 	}
 }
 exports.input_system = function(WORLD, data){
-	//console.log(data);
+	
 	if(data.KEY === "W")
 		WORLD.movement[data.id].accelerate_forward = data.isPressed;
 	if(data.KEY === "S")
@@ -349,8 +306,9 @@ exports.projectiles_life_system = function(WORLD, entities){
 	projectile_mask = (COMPONENTS.PROJECTILE);
 	if((WORLD.mask[entities] & projectile_mask) == projectile_mask){
 		pro = WORLD.projectile[entities];
+
 		if(pro.spawn >= pro.life_span){
-			WORLD.DestroyEntity(entities);
+			DestroyEntity(WORLD,entities);
 		}else{
 			pro.spawn += 1;
 		}
@@ -394,7 +352,7 @@ exports.bullet_hits_system = function(WORLD, entity){
 			&& (WORLD.mask[WORLD.collision[entity].collision_target] & projectile_masks) != projectile_masks){
 			target = WORLD.collision[entity].collision_target;
 			WORLD.damage_stack.push([target, WORLD.projectile[entity].damage]);
-			WORLD.DestroyEntity(entity);
+			DestroyEntity(WORLD, entity);
 		}
 	}
 }
@@ -454,17 +412,6 @@ exports.shield_recharge_system = function(WORLD, entities){
 	}
 }
 
-exports.spawn_system = function(WORLD, player){
-	if(player.alive == false){
-		if(player.respawn_timer == player.current_respawn_timer){
-			spawn_player(WORLD, player);
-			player.current_respawn_timer = 0;
-		}else{
-			player.current_respawn_timer += 1;
-		}
-	}
-}
-
 exports.module_system = function(WORLD, entities, dt){
 	player_mask = (COMPONENTS.CONTAINER | COMPONENTS.MODULES);
 	if((WORLD.mask[entities] & player_mask) == player_mask){
@@ -493,8 +440,9 @@ var activate_module = function(WORLD, entity_id){
 	}
 }
 
-//ADD WIN/LOSE CONDITIONS + COUNTDOWN BEFORE GAME STARTS(WHICH INVOLVES PAUSING USER INPUT UNTIL THE GAME DOES START)
-//IMPLEMENT 6 PLAYER GAMES
-//IMPLEMENTS OFFENSIVE MODULES
-//START DESIGNING A BETTER LAYOUT FOR THE WEBSITE ON PAPER
+//FIX UP THE VERY BAD MODULE SYSTEM. MAKE IT EASIER TO CREATE MORE CUSTOM MODULES
+//WORK ON COLLISION HANDLING. JUST CREATE A NEW COMPONENT CALLED COLLISION.... OR SOMETHING.
+//COLLISION COMPONENT COULD HAVE A CUSTOM FUNCTION TO TELL IT WHAT TO DO WHEN IT COLLIDES WITH SOMETHING.
+//THE COLLISION SYSTEM COULD GIVE THE CUSTOM FUNCTION SOME INFO ABOUT WHAT IT COLLIDED WITH.
+//START IMPLEMENTING HEALTH BAR/SHIELDS AND THEN ADD SOME GUI TO THE CLIENT SIDE GAME
 
