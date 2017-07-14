@@ -3,7 +3,7 @@
   My first attempt at making a multiplayer, browser-based game. I don't code with HTML + CSS often, because im more of a backend development kind of guy, so the aesthetics, I will admit, are complete shite. Also the fact that the only times I touch HTML or CSS is during a school project, should explain why the coding practices isn't up to standard :)
   
   
-    This was supposed to just be a small project for me to learn about multiplayer programming using nodejs; Because of that, and the fact that a lot of its early code is made of spaghetti, its currently abandoned. It was a good learning process though, and now just something to show off.
+  This was supposed to just be a small project for me to learn about multiplayer programming using nodejs; Because of that, and the fact that a lot of its early code is made of spaghetti, its currently abandoned. It was a good learning process though, and now just something to show off.
 
 
 
@@ -24,6 +24,8 @@ It Uses:
 
 -... and several others I might have forgotten.
 
+
+===========================================
 
 
 Features in place:
