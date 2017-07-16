@@ -7,7 +7,7 @@
 
 
 
-  The game itself was coded with a data-oriented design in mind. So it uses an entity-component system(Its not perfect, this project was one of my earlier forays into DOD and ECS), which once in place, I could easily create components to the space ship with various properties without editing the source does itself, but instead, adding a json object to the database.
+  The game itself was coded with a data-oriented design in mind. So it uses an entity-component system(Its not perfect, this project was one of my earlier forays into DOD and ECS), which once in place, I could easily create components with various properties without editing the source files itself, but instead, adding a json object to the database.
   
 It Uses:
 
@@ -37,5 +37,9 @@ Features in place:
 -Database for logins, and sessions
 
 -Database for basic components of the space ship.
+
+-Very rough and basic gameplay (Extremely unoptimized code)
+
+-Multiplayer (The whole game is multiplayer)
 
 (Going to add more information later.)
