@@ -7,7 +7,7 @@
 
 
 
-  The way the game itself was coded with a data-driven approach in mind. So it uses an entity-component system(This game was also part of my early forays into programming a proper entity-component system), which once in place, I could easily create components to the space ship with various properties without editing the source does itself, but instead, adding a json object to the database.
+  The game itself was coded with a data-oriented design in mind. So it uses an entity-component system(Its not perfect, this project was one of my earlier forays into DOD and ECS), which once in place, I could easily create components to the space ship with various properties without editing the source does itself, but instead, adding a json object to the database.
   
 It Uses:
 
